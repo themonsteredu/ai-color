@@ -58,16 +58,16 @@ function StartScreen({ query, error, onQuery, onSubmit }: StartScreenProps) {
         <p>전문가가 찾아준 나의 색</p>
       </section>
       <form className="start-form" onSubmit={(event) => { event.preventDefault(); onSubmit() }}>
-        <label htmlFor="student-query">이름 또는 활동 코드</label>
+        <label htmlFor="student-query">학생 이름</label>
         <input
           id="student-query"
           autoComplete="off"
           value={query}
           onChange={(event) => onQuery(event.target.value)}
-          placeholder="예: 김하늘 또는 COLOR01"
+          placeholder="예: 김하늘"
           aria-describedby={error ? 'query-error query-help' : 'query-help'}
         />
-        <p id="query-help" className="input-help">테스트: 김하늘 · COLOR01 · 윤보라 · COOL02</p>
+        <p id="query-help" className="input-help">전문가가 등록한 이름을 그대로 입력해 주세요. 테스트: 김하늘 · 윤보라</p>
         {error ? <p id="query-error" className="form-error" role="alert">{error}</p> : null}
         <button className="primary-button" type="submit">결과 확인하기<ArrowRight size={20} /></button>
       </form>
@@ -390,9 +390,9 @@ export function StudentApp() {
 
   const handleLookup = () => {
     const normalized = query.trim().toLocaleLowerCase('ko-KR')
-    const found = students.find((item) => item.name.toLocaleLowerCase('ko-KR') === normalized || item.code.toLocaleLowerCase('ko-KR') === normalized)
+    const found = students.find((item) => item.name.toLocaleLowerCase('ko-KR') === normalized)
     if (!found) {
-      setError('등록된 학생을 찾지 못했어요. 이름이나 코드를 다시 확인해 주세요.')
+      setError('등록된 학생을 찾지 못했어요. 이름을 다시 확인해 주세요.')
       return
     }
     setError('')

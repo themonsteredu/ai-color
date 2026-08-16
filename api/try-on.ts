@@ -1,8 +1,10 @@
 import OpenAI, { toFile } from 'openai'
+import { resolveImageSettings } from './_settings.js'
 
 interface ApiRequest {
   method?: string
   body: unknown
+  headers: { cookie?: string }
 }
 
 interface ApiResponse {
@@ -24,9 +26,6 @@ interface TryOnBody {
   generationNumber?: number
 }
 
-const model = process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1.5'
-const quality = process.env.OPENAI_IMAGE_QUALITY || 'medium'
-const size = process.env.OPENAI_IMAGE_SIZE || '1024x1536'
 const generationLimit = Number(process.env.TRYON_GENERATION_LIMIT || 2)
 
 function parseDataUrl(dataUrl: string) {
@@ -41,7 +40,8 @@ function safeName(value: string) {
 
 export default async function handler(request: ApiRequest, response: ApiResponse) {
   if (request.method !== 'POST') return response.status(405).json({ error: 'POST 요청만 지원합니다.' })
-  if (!process.env.OPENAI_API_KEY) return response.status(503).json({ error: 'OPENAI_API_KEY가 아직 설정되지 않았어요.' })
+  const imageSettings = resolveImageSettings(request.headers.cookie)
+  if (!imageSettings) return response.status(503).json({ error: '설정 메뉴에서 OpenAI API 키를 먼저 등록해 주세요.' })
 
   try {
     const body = request.body as TryOnBody
@@ -79,7 +79,8 @@ export default async function handler(request: ApiRequest, response: ApiResponse
       'Do not apply makeup, beautification, face reshaping, skin retouching, body reshaping, extra jewelry, logos, text, or a watermark.',
     ].join('\n')
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+    const { apiKey, model, quality, size } = imageSettings
+    const openai = new OpenAI({ apiKey })
     const result = await openai.images.edit({
       model,
       image: imageInputs,
