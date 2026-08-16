@@ -35,6 +35,7 @@ export type StudentScreen =
   | 'result'
   | 'home'
   | 'photo'
+  | 'studio'
   | 'outfit'
   | 'outfitCompare'
   | 'makeup'

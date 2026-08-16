@@ -11,8 +11,9 @@ import {
   Sun,
   Upload,
 } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DEFAULT_MAKEUP, MAKEUP_COLORS, OUTFIT_COLORS, toneLabel } from '../data'
+import { AvatarStudio } from '../avatar/AvatarStudio'
 import { loadStudents, saveStudents } from '../store'
 import type { ActivityKey, FacePlacement, MakeupState, Student, StudentScreen } from '../types'
 import { BottomNav } from './BottomNav'
@@ -110,7 +111,7 @@ function ActivityHome({ student, hasPhoto, onOpen, onReset }: ActivityHomeProps)
   const completedCount = new Set(student.completed).size
   const percent = (completedCount / 5) * 100
   const activities = [
-    { screen: hasPhoto ? 'outfit' : 'photo', title: '옷 색상 비교', copy: hasPhoto ? '상의 색을 바꿔 어울림을 확인해요' : '먼저 사진을 준비해요', icon: Shirt, color: 'coral', done: student.completed.includes('outfit') },
+    { screen: hasPhoto ? 'studio' : 'photo', title: '아바타 스튜디오', copy: hasPhoto ? '옷·헤어·배경을 바로 꾸며봐요' : '먼저 사진을 준비해요', icon: Shirt, color: 'coral', done: student.completed.includes('outfit') },
     { screen: hasPhoto ? 'makeup' : 'photo', title: '컬러 메이크업', copy: '립·블러셔·아이섀도를 체험해요', icon: Sparkles, color: 'apricot', done: student.completed.includes('makeup') },
     { screen: hasPhoto ? 'outfitCompare' : 'photo', title: '두 색 비교', copy: '같은 얼굴로 두 색을 나란히 봐요', icon: Columns2, color: 'sage', done: student.completed.includes('compare') },
     { screen: hasPhoto ? 'card' : 'photo', title: '나의 컬러 스타일', copy: '선택한 조합을 카드로 저장해요', icon: IdCard, color: 'lavender', done: student.completed.includes('card') },
@@ -374,16 +375,18 @@ export function StudentApp() {
     }
   }, [])
 
-  const completed = useMemo(() => new Set(student?.completed ?? []), [student?.completed])
-
-  const updateCompleted = (activity: ActivityKey) => {
-    if (!student || completed.has(activity)) return
-    const updatedStudent = { ...student, completed: [...student.completed, activity] }
+  const updateCompletedMany = (activities: ActivityKey[]) => {
+    if (!student) return
+    const nextCompleted = [...new Set([...student.completed, ...activities])]
+    if (nextCompleted.length === student.completed.length) return
+    const updatedStudent = { ...student, completed: nextCompleted }
     const nextStudents = students.map((item) => item.id === updatedStudent.id ? updatedStudent : item)
     setStudent(updatedStudent)
     setStudents(nextStudents)
     saveStudents(nextStudents)
   }
+
+  const updateCompleted = (activity: ActivityKey) => updateCompletedMany([activity])
 
   const handleLookup = () => {
     const normalized = query.trim().toLocaleLowerCase('ko-KR')
@@ -403,7 +406,7 @@ export function StudentApp() {
     photoRef.current = url
     setPhotoUrl(url)
     updateCompleted('photo')
-    setScreen('outfit')
+    setScreen('studio')
   }
 
   const finishActivity = () => {
@@ -424,6 +427,7 @@ export function StudentApp() {
   if (screen === 'start' || !student) return <StartScreen query={query} error={error} onQuery={(value) => { setQuery(value); setError('') }} onSubmit={handleLookup} />
   if (screen === 'result') return <ToneResult student={student} onContinue={() => setScreen('home')} onReset={finishActivity} />
   if (screen === 'photo') return <main className="page-content no-nav"><TopBar title="사진 준비하기" onBack={() => setScreen('home')} /><PhotoCapture onPhoto={handlePhoto} onCancel={() => setScreen('home')} /></main>
+  if (screen === 'studio' && photoUrl) return <AvatarStudio student={student} photoUrl={photoUrl} onBack={() => setScreen('home')} onRetake={() => setScreen('photo')} onComplete={() => { updateCompletedMany(['outfit', 'card']); setScreen('home') }} />
   if (screen === 'outfit' && photoUrl) return <OutfitScreen imageUrl={photoUrl} selected={outfitColor} placement={placement} onPlacement={setPlacement} onSelect={setOutfitColor} onBack={() => setScreen('home')} onCompare={() => setScreen('outfitCompare')} onNext={() => { updateCompleted('outfit'); setScreen('makeup') }} />
   if (screen === 'outfitCompare' && photoUrl) return <OutfitCompare imageUrl={photoUrl} leftColor={outfitColor} rightColor={compareColor} placement={placement} onRightColor={setCompareColor} onBack={() => setScreen('outfit')} onDone={() => { updateCompleted('compare'); setOutfitColor(compareColor); setScreen('home') }} />
   if (screen === 'makeup' && photoUrl) return <MakeupScreen imageUrl={photoUrl} outfitColor={outfitColor} makeup={makeup} placement={placement} onPlacement={setPlacement} onMakeup={setMakeup} onBack={() => setScreen('home')} onNext={() => { updateCompleted('makeup'); setScreen('beforeAfter') }} />
