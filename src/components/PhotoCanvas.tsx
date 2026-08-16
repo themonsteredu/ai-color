@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import type { FacePoint } from '../avatar/types'
+import type { FacePoint } from '../face/types'
 import type { FacePlacement, MakeupState } from '../types'
 
 interface PhotoCanvasProps {

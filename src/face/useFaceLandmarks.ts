@@ -60,4 +60,3 @@ export function useFaceLandmarks(photoUrl: string) {
 
   return { landmarks, status }
 }
-
