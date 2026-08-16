@@ -4,6 +4,10 @@
     {
       "source": "/expert",
       "destination": "/index.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/index.html"
     }
   ]
 }

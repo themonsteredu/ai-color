@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ExpertApp } from './components/ExpertApp'
+import { SettingsApp } from './components/SettingsApp'
 import { StudentApp } from './components/StudentApp'
 
 export default function App() {
@@ -7,6 +8,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/expert" element={<ExpertApp />} />
+        <Route path="/settings" element={<SettingsApp />} />
         <Route path="*" element={<StudentApp />} />
       </Routes>
     </BrowserRouter>
