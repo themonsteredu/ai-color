@@ -10,6 +10,7 @@ export function PhotoCapture({ onPhoto, onCancel }: PhotoCaptureProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
   const [cameraState, setCameraState] = useState<'idle' | 'loading' | 'active' | 'blocked'>('idle')
+  const [consent, setConsent] = useState(false)
 
   const stopCamera = () => {
     streamRef.current?.getTracks().forEach((track) => track.stop())
@@ -65,7 +66,7 @@ export function PhotoCapture({ onPhoto, onCancel }: PhotoCaptureProps) {
     <div className="capture-screen">
       <div className="privacy-hero">
         <span className="privacy-icon"><ShieldCheck size={34} /></span>
-        <div><strong>안심하고 촬영하세요</strong><p>사진은 기기 안에서만 사용돼요</p></div>
+        <div><strong>가상착의 처리 안내</strong><p>입어보기를 누르면 사진이 OpenAI API로 전송돼요</p></div>
       </div>
 
       <div className={`camera-frame ${cameraState === 'active' ? 'is-live' : ''}`}>
@@ -73,30 +74,31 @@ export function PhotoCapture({ onPhoto, onCancel }: PhotoCaptureProps) {
         {cameraState !== 'active' ? (
           <div className="camera-empty">
             <Camera size={38} />
-            <strong>{cameraState === 'blocked' ? '카메라를 사용할 수 없어요' : '얼굴과 어깨를 맞춰주세요'}</strong>
-            <span>{cameraState === 'blocked' ? '아래 사진 업로드를 이용해 주세요' : '정면을 보고 자연스럽게 서 주세요'}</span>
+            <strong>{cameraState === 'blocked' ? '카메라를 사용할 수 없어요' : '머리부터 발끝까지 맞춰주세요'}</strong>
+            <span>{cameraState === 'blocked' ? '아래 사진 업로드를 이용해 주세요' : '밝은 곳에서 정면으로 자연스럽게 서 주세요'}</span>
           </div>
         ) : null}
-        <div className="face-guide" aria-hidden="true" />
-        <div className="shoulder-guide" aria-hidden="true" />
+        <div className="body-guide" aria-hidden="true" />
       </div>
 
       <ul className="privacy-list">
-        <li><ShieldCheck size={18} />사진은 저장되지 않아요</li>
-        <li><Sparkles size={18} />얼굴과 어깨만 촬영해요</li>
-        <li><Trash2 size={18} />활동이 끝나면 자동 삭제돼요</li>
+        <li><ShieldCheck size={18} />앱 저장소에는 보관하지 않아요</li>
+        <li><Sparkles size={18} />전신이 보이는 사진이 좋아요</li>
+        <li><Trash2 size={18} />활동 종료 시 임시 사진을 지워요</li>
       </ul>
+
+      <label className="photo-consent"><input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} /><span>가상착의를 위해 선택한 사진이 OpenAI API에서 처리되는 것에 동의합니다.</span></label>
 
       {cameraState === 'active' ? (
         <button className="primary-button camera-button" type="button" onClick={capture}><Camera size={21} />사진 촬영하기</button>
       ) : (
-        <button className="primary-button" type="button" onClick={openCamera} disabled={cameraState === 'loading'}>
+        <button className="primary-button" type="button" onClick={openCamera} disabled={!consent || cameraState === 'loading'}>
           <Camera size={21} />{cameraState === 'loading' ? '카메라 여는 중…' : '카메라 열기'}
         </button>
       )}
-      <label className="secondary-button file-button">
+      <label className={`secondary-button file-button${consent ? '' : ' disabled'}`}>
         <ImagePlus size={20} />사진에서 선택
-        <input type="file" accept="image/*" capture="user" onChange={(event) => upload(event.target.files?.[0])} />
+        <input type="file" accept="image/*" capture="user" disabled={!consent} onChange={(event) => upload(event.target.files?.[0])} />
       </label>
       <button className="text-button" type="button" onClick={() => { stopCamera(); onCancel() }}>나중에 하기</button>
     </div>

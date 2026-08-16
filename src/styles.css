@@ -228,9 +228,12 @@ p, button, input, label, small { letter-spacing: -0.02em; line-height: 1.55; }
 .camera-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 9px; color: #877f78; }.camera-empty strong { font-size: 14px; }.camera-empty span { font-size: 10px; }
 .face-guide { position: absolute; top: 15%; left: 26%; width: 48%; height: 54%; border: 2px solid rgba(255,255,255,.9); border-radius: 50%; box-shadow: 0 0 0 1px rgba(0,0,0,.05); }
 .shoulder-guide { position: absolute; left: 9%; right: 9%; bottom: 13%; height: 20%; border: 2px solid rgba(255,255,255,.9); border-bottom: 0; border-radius: 50% 50% 0 0; }
+.body-guide { position: absolute; top: 7%; bottom: 7%; left: 27%; width: 46%; border: 2px dashed rgba(255,255,255,.92); border-radius: 44% 44% 23% 23%; box-shadow: 0 0 0 1px rgba(0,0,0,.04); }
 .privacy-list { list-style: none; padding: 0; margin: 13px 0; display: flex; justify-content: space-between; gap: 5px; }
 .privacy-list li { flex: 1; display: flex; align-items: center; flex-direction: column; gap: 4px; color: #6d6762; font-size: 8px; text-align: center; }.privacy-list svg { color: var(--warm); }
-.file-button { position: relative; cursor: pointer; }.file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.photo-consent { display: flex; align-items: flex-start; gap: 9px; margin: 14px 0; padding: 12px; border-radius: 14px; color: #645e59; font-size: 10px; line-height: 1.55; background: #fff; box-shadow: var(--soft-shadow); }
+.photo-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin: 0; accent-color: var(--warm); }
+.file-button { position: relative; cursor: pointer; }.file-button input { position: absolute; width: 1px; height: 1px; opacity: 0; }.file-button.disabled { color: #aaa39d; cursor: not-allowed; background: #e9e5e0; }
 .camera-button { margin-top: 0; }
 
 /* Editors */
