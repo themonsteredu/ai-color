@@ -1,5 +1,6 @@
 import { Camera, LoaderCircle, TriangleAlert } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import type { MakeupState } from '../types'
 
 interface OpenMakeupInstance {
@@ -11,7 +12,7 @@ interface OpenMakeupInstance {
 
 interface OpenMakeupMirrorProps {
   makeup: MakeupState
-  fallback: React.ReactNode
+  fallback: ReactNode
 }
 
 const CAMERA_UTILS = 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js'
