@@ -2,6 +2,7 @@ import { ArrowLeft, Check, LoaderCircle, Palette, Shirt, Sparkles } from 'lucide
 import { useMemo, useState } from 'react'
 import { DEFAULT_MAKEUP, MAKEUP_COLORS, toneLabel } from '../data'
 import type { MakeupChoice, MakeupState, Student } from '../types'
+import { OpenMakeupMirror } from '../components/OpenMakeupMirror'
 import { PhotoCanvas } from '../components/PhotoCanvas'
 import { PaletteStrip } from '../components/PaletteStrip'
 import { CATEGORY_LABELS, DEFAULT_LOOKS, findItem, itemsFor, selectedItems } from './catalog'
@@ -120,6 +121,7 @@ export function StyleStudio({ student, photoUrl, onBack, onRetake, onComplete }:
   }
 
   if (stage === 'makeup') {
+    const fallbackPreview = <PhotoCanvas imageUrl={photoUrl} makeup={makeup} placement={FACE_PLACEMENT} ariaLabel="메이크업 사진 미리보기" />
     return (
       <main className="wardrobe-studio">
         <header className="wardrobe-topbar">
@@ -129,12 +131,12 @@ export function StyleStudio({ student, photoUrl, onBack, onRetake, onComplete }:
         </header>
         <div className="wardrobe-layout">
           <section className="tryon-stage">
-            <div className="stage-heading"><div><small>MAKEUP DESIGN</small><h1>내 톤에 맞는<br />메이크업을 골라봐요</h1></div><span><Palette size={14} /> 무료 미리보기</span></div>
+            <div className="stage-heading"><div><small>MAKEUP DESIGN</small><h1>내 톤에 맞는<br />메이크업을 골라봐요</h1></div><span><Palette size={14} /> 무료 실시간 미러</span></div>
             <div className="student-photo-stage has-result">
-              <PhotoCanvas imageUrl={photoUrl} makeup={makeup} placement={FACE_PLACEMENT} ariaLabel="메이크업 미리보기" />
-              <span className="preview-label">메이크업 미리보기</span>
+              <OpenMakeupMirror makeup={makeup} fallback={fallbackPreview} />
+              <span className="preview-label">OpenMakeupSDK · 무료</span>
             </div>
-            <p className="input-help">지금은 색과 강도를 고르는 단계예요. 최종 AI 생성은 의상까지 고른 뒤 한 번만 실행합니다.</p>
+            <p className="input-help">카메라에서 립·블러셔·아이 색을 바로 바꿔보세요. 지원되지 않는 기기에서는 자동으로 사진 미리보기로 전환됩니다. 최종 AI 생성은 의상까지 고른 뒤 한 번만 실행합니다.</p>
           </section>
           <section className="wardrobe-editor">
             <div className="wardrobe-sheet">
