@@ -1,105 +1,77 @@
-import { ArrowLeft, Check, Plus, Settings, Trash2, UserCog, UserRound } from 'lucide-react'
+import { ArrowLeft, KeyRound, LockKeyhole, MonitorSmartphone, Palette, Settings, Sparkles } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { TONE_PALETTES, toneLabel } from '../data'
-import { createActivityCode, loadStudents, saveStudents } from '../store'
-import type { Student, Tone } from '../types'
-import { PaletteStrip } from './PaletteStrip'
+
+export const CLASS_CODE = 'COLOR26'
+const TEACHER_PIN = '3035'
 
 export function ExpertApp() {
-  const [students, setStudents] = useState<Student[]>(() => loadStudents())
-  const [name, setName] = useState('')
-  const [tone, setTone] = useState<Tone>('warm')
-  const [palette, setPalette] = useState<string[]>(TONE_PALETTES.warm)
-  const [formError, setFormError] = useState('')
+  const [pin, setPin] = useState('')
+  const [unlocked, setUnlocked] = useState(false)
+  const [error, setError] = useState('')
 
-  const changeTone = (nextTone: Tone) => {
-    setTone(nextTone)
-    setPalette(TONE_PALETTES[nextTone])
-  }
-
-  const addStudent = (event: FormEvent) => {
+  const unlock = (event: FormEvent) => {
     event.preventDefault()
-    if (!name.trim()) return
-    if (students.some((student) => student.name.toLocaleLowerCase('ko-KR') === name.trim().toLocaleLowerCase('ko-KR'))) {
-      setFormError('같은 이름의 학생이 이미 등록되어 있어요.')
+    if (pin !== TEACHER_PIN) {
+      setError('교사용 비밀번호가 올바르지 않습니다.')
       return
     }
-    const nextStudent: Student = {
-      id: crypto.randomUUID(),
-      name: name.trim(),
-      code: createActivityCode(students),
-      tone,
-      palette,
-      completed: [],
-      createdAt: new Date().toISOString(),
-    }
-    const nextStudents = [nextStudent, ...students]
-    setStudents(nextStudents)
-    saveStudents(nextStudents)
-    setName('')
-    setFormError('')
+    setError('')
+    setUnlocked(true)
   }
 
-  const removeStudent = (id: string) => {
-    const nextStudents = students.filter((student) => student.id !== id)
-    setStudents(nextStudents)
-    saveStudents(nextStudents)
+  if (!unlocked) {
+    return (
+      <main className="teacher-gate">
+        <section className="teacher-lock-card">
+          <span className="settings-lock-icon"><LockKeyhole size={34} /></span>
+          <small>TEACHER ONLY</small>
+          <h1>교사용 관리센터</h1>
+          <p>교사용 비밀번호를 입력해 주세요.</p>
+          <form onSubmit={unlock}>
+            <label>비밀번호<input type="password" inputMode="numeric" maxLength={4} value={pin} onChange={(event) => { setPin(event.target.value); setError('') }} placeholder="3035" autoFocus /></label>
+            {error ? <p className="form-error" role="alert">{error}</p> : null}
+            <button className="primary-button" type="submit"><KeyRound size={18} />관리센터 열기</button>
+          </form>
+          <Link className="expert-link" to="/"><ArrowLeft size={15} /> 학생 화면으로</Link>
+        </section>
+      </main>
+    )
   }
 
   return (
-    <main className="expert-page">
+    <main className="expert-page teacher-center">
       <header className="expert-header">
         <div className="expert-header-inner">
           <Link className="expert-back" to="/"><ArrowLeft size={20} />학생 화면</Link>
-          <div className="expert-brand"><span><UserCog size={25} /></span><div><small>COLOR MATE</small><strong>전문가 관리</strong></div></div>
-          <div className="expert-header-actions"><div className="expert-count"><b>{students.length}</b><span>등록 학생</span></div><Link className="expert-settings" to="/settings"><Settings size={17} />AI 설정</Link></div>
+          <div className="expert-brand"><span><Palette size={25} /></span><div><small>COLOR MATE</small><strong>교사용 관리센터</strong></div></div>
+          <Link className="expert-settings" to="/settings"><Settings size={17} />AI 설정</Link>
         </div>
       </header>
 
-      <div className="expert-layout">
-        <section className="expert-panel add-student-panel">
-          <div className="expert-section-title"><span><Plus size={20} /></span><div><h1>학생 추가</h1><p>진단 결과와 추천 색을 지정해 주세요.</p></div></div>
-          <form onSubmit={addStudent}>
-            <label>학생 이름<input value={name} onChange={(event) => { setName(event.target.value); setFormError('') }} placeholder="예: 김하늘" required /></label>
-            {formError ? <p className="form-error" role="alert">{formError}</p> : null}
-            <fieldset>
-              <legend>퍼스널컬러</legend>
-              <div className="tone-options">
-                <button type="button" className={`tone-option warm ${tone === 'warm' ? 'selected' : ''}`} onClick={() => changeTone('warm')}><span>☀</span><div><strong>웜톤</strong><small>코랄 · 살구 · 카멜</small></div>{tone === 'warm' ? <Check size={18} /> : null}</button>
-                <button type="button" className={`tone-option cool ${tone === 'cool' ? 'selected' : ''}`} onClick={() => changeTone('cool')}><span>❄</span><div><strong>쿨톤</strong><small>라벤더 · 핑크 · 블루</small></div>{tone === 'cool' ? <Check size={18} /> : null}</button>
-              </div>
-            </fieldset>
-            <fieldset>
-              <legend>추천 색상 5개</legend>
-              <div className="color-inputs">
-                {palette.map((color, index) => <label key={index} style={{ background: color }} aria-label={`${index + 1}번째 추천 색상`}><input type="color" value={color} onChange={(event) => setPalette((current) => current.map((item, itemIndex) => itemIndex === index ? event.target.value : item))} /></label>)}
-              </div>
-              <PaletteStrip colors={palette} />
-            </fieldset>
-            <button className="primary-button" type="submit"><Plus size={20} />학생 추가하기</button>
-          </form>
-          <p className="privacy-footnote">얼굴 사진은 이 관리 화면이나 로컬 저장소에 저장되지 않습니다.</p>
+      <div className="teacher-dashboard">
+        <section className="teacher-code-card">
+          <small>TODAY'S CLASS CODE</small>
+          <h1>{CLASS_CODE}</h1>
+          <p>학생은 첫 화면에서 이 수업코드와 자기 이름을 입력하고 시작합니다.</p>
         </section>
 
-        <section className="expert-panel student-list-panel">
-          <div className="expert-section-title"><span><UserRound size={20} /></span><div><h2>학생 활동 현황</h2><p>이 브라우저에 저장된 프로토타입 데이터입니다.</p></div></div>
-          <div className="student-table" role="list">
-            {students.length === 0 ? <div className="empty-students"><UserRound size={32} /><p>아직 등록된 학생이 없어요.</p></div> : students.map((student) => {
-              const progress = Math.round((new Set(student.completed).size / 5) * 100)
-              return (
-                <article className="student-row" role="listitem" key={student.id}>
-                  <div className="student-avatar" style={{ background: student.palette[0] }}>{student.name.slice(-1)}</div>
-                  <div className="student-main">
-                    <div className="student-line"><strong>{student.name}</strong><span className={`tone-pill ${student.tone}`}>{toneLabel(student.tone)}</span></div>
-                    <small className="name-login-note">학생 이름으로 바로 입장</small>
-                    <div className="student-progress"><span><i style={{ width: `${progress}%` }} /></span><b>{progress}%</b></div>
-                  </div>
-                  <button className="delete-button" type="button" onClick={() => removeStudent(student.id)} aria-label={`${student.name} 삭제`}><Trash2 size={18} /></button>
-                </article>
-              )
-            })}
+        <section className="teacher-flow-card">
+          <div className="expert-section-title"><span><MonitorSmartphone size={20} /></span><div><h2>오늘 수업 흐름</h2><p>교사가 학생 톤을 미리 입력하지 않습니다.</p></div></div>
+          <div className="teacher-flow-grid">
+            <div><b>1</b><strong>학생 입장</strong><small>{CLASS_CODE} + 이름</small></div>
+            <div><b>2</b><strong>내 톤 예상</strong><small>웹앱 4문항</small></div>
+            <div><b>3</b><strong>실물 체험</strong><small>선생님과 컬러천 비교</small></div>
+            <div><b>4</b><strong>내 톤 확정</strong><small>웜톤 / 쿨톤</small></div>
+            <div><b>5</b><strong>메이크업</strong><small>무료 실시간 미리보기</small></div>
+            <div><b>6</b><strong>AI 스타일링</strong><small>의상까지 고른 뒤 최종 1회</small></div>
           </div>
+        </section>
+
+        <section className="teacher-ai-card">
+          <Sparkles size={22} />
+          <div><strong>AI 비용 원칙</strong><p>톤 탐색·메이크업·의상 선택은 무료, 최종 스타일 생성에서만 OpenAI 이미지 API를 1회 사용합니다.</p></div>
+          <Link to="/settings">AI 설정 열기</Link>
         </section>
       </div>
     </main>
