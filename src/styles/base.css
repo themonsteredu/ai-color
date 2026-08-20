@@ -1,0 +1,180 @@
+/* ============================================================
+   기본 스타일 · 한글 타이포그래피
+   ============================================================ */
+@font-face {
+  font-family: "S-Core Dream";
+  src: url("/fonts/SCDream4-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "S-Core Dream";
+  src: url("/fonts/SCDream5-Medium.otf") format("opentype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "S-Core Dream";
+  src: url("/fonts/SCDream6-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "S-Core Dream";
+  src: url("/fonts/SCDream7-ExtraBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    min-width: 320px;
+    background: var(--cream);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    min-height: 100vh;
+    background: var(--ivory);
+    color: var(--ink);
+    font-family: "S-Core Dream", "Pretendard", "Apple SD Gothic Neo", system-ui, sans-serif;
+    font-size: var(--fs-body);
+    font-weight: 400;
+    line-height: var(--lh-body);
+    letter-spacing: var(--ls-body);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    /* 어떤 화면에서도 가로 스크롤이 생기지 않도록 */
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--ivory);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  p,
+  figure,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  ul,
+  ol {
+    padding: 0;
+    list-style: none;
+  }
+
+  /* 한글은 단어 중간에서 끊지 않고, 긴 영문/URL 만 강제로 접습니다. */
+  :where(h1, h2, h3, h4, p, span, small, strong, b, li, label, button, a, summary, td, th, figcaption, legend, option) {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  :where(h1, h2, h3, h4) {
+    font-weight: 700;
+    line-height: var(--lh-title);
+    letter-spacing: var(--ls-display);
+    text-wrap: balance;
+  }
+
+  :where(p, li) {
+    text-wrap: pretty;
+  }
+
+  h1 {
+    font-size: var(--fs-title);
+  }
+  h2 {
+    font-size: var(--fs-section);
+  }
+  h3 {
+    font-size: var(--fs-lead);
+  }
+
+  small {
+    font-size: var(--fs-meta);
+    line-height: var(--lh-meta);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* 환경변수명처럼 긴 영문 토큰은 좁은 화면에서 접히도록 */
+  code {
+    font-family: inherit;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+    font-size: var(--fs-body);
+    color: inherit;
+    letter-spacing: inherit;
+  }
+
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :where(button, a, input, select, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  input[type="range"] {
+    accent-color: var(--coral);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

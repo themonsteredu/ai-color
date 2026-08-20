@@ -1,0 +1,9 @@
+/* 레이어 우선순위를 먼저 선언해 두면 이후 파일 순서와 상관없이
+   tokens → base → components → screens 순서로 적용됩니다.
+   (덮어쓰기용 !important 나 중복 media query 가 필요 없습니다.) */
+@layer tokens, base, components, screens;
+
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./screens.css";
