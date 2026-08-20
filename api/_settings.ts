@@ -9,6 +9,7 @@ export interface ImageSettings {
 
 export const SETTINGS_COOKIE = 'color_mate_ai_settings'
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30
+const SETTINGS_PIN = '3035'
 
 function encryptionKey() {
   const secret = process.env.SETTINGS_ENCRYPTION_KEY
@@ -17,14 +18,12 @@ function encryptionKey() {
 }
 
 export function settingsStorageReady() {
-  return Boolean(encryptionKey() && process.env.SETTINGS_PIN)
+  return Boolean(encryptionKey())
 }
 
 export function verifySettingsPin(pin: string) {
-  const expected = process.env.SETTINGS_PIN
-  if (!expected) return false
   const left = Buffer.from(pin)
-  const right = Buffer.from(expected)
+  const right = Buffer.from(SETTINGS_PIN)
   return left.length === right.length && timingSafeEqual(left, right)
 }
 

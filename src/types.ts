@@ -1,5 +1,19 @@
 export type Tone = 'warm' | 'cool'
 
+export type PersonalColorType =
+  | 'spring-light'
+  | 'spring-bright'
+  | 'spring-warm'
+  | 'summer-light'
+  | 'summer-muted'
+  | 'summer-cool'
+  | 'autumn-muted'
+  | 'autumn-warm'
+  | 'autumn-deep'
+  | 'winter-bright'
+  | 'winter-cool'
+  | 'winter-deep'
+
 export type ActivityKey = 'photo' | 'outfit' | 'makeup' | 'compare' | 'card'
 
 export interface Student {
@@ -7,6 +21,7 @@ export interface Student {
   name: string
   code: string
   tone: Tone
+  personalColorType?: PersonalColorType
   palette: string[]
   completed: ActivityKey[]
   createdAt: string
@@ -41,4 +56,3 @@ export type StudentScreen =
   | 'makeup'
   | 'beforeAfter'
   | 'card'
-
