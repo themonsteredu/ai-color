@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && tsc -p tsconfig.api.json && vite build",
+    "dev": "npm run prepare:mediapipe && vite",
+    "build": "npm run prepare:mediapipe && tsc -b && tsc -p tsconfig.api.json && vite build",
+    "prepare:mediapipe": "node scripts/prepare-mediapipe.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
