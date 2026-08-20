@@ -4,6 +4,7 @@ import App from './App'
 import './wardrobe/wardrobe.css'
 import './styles.css'
 import './responsive.css'
+import './responsive-v2.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
