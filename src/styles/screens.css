@@ -1,0 +1,1199 @@
+/* ============================================================
+   화면별 레이아웃
+   노트북(1180+) 은 가로폭을 적극적으로 사용하고,
+   태블릿(768~1179) 은 거의 전체 폭을 쓰되 필요한 곳만 2열,
+   모바일(~767) 은 1열로 흐릅니다.
+   ============================================================ */
+@layer screens {
+  /* =========================================================
+     1. 학생 입장
+     ========================================================= */
+  .entry {
+    display: grid;
+    gap: var(--gap-lg);
+    align-content: center;
+    padding-block: var(--gap-lg) var(--gap-xl);
+  }
+
+  .entry__brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: var(--gap-md);
+  }
+
+  .entry__mark {
+    display: grid;
+    place-items: center;
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    color: #fff;
+    background: linear-gradient(140deg, var(--coral), #f7a07f);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .entry__intro h1 {
+    margin-top: 6px;
+    font-size: var(--fs-display);
+    line-height: var(--lh-display);
+  }
+
+  .entry__intro .lead {
+    margin-top: 12px;
+    max-width: 34ch;
+  }
+
+  .entry__roles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: var(--gap-md);
+  }
+
+  .entry__flow {
+    margin-top: var(--gap-lg);
+    padding-top: var(--gap-md);
+    border-top: 1px solid var(--line);
+  }
+
+  .entry__flow > strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--fs-body);
+  }
+
+  .entry__form {
+    display: grid;
+    gap: var(--gap-md);
+  }
+
+  @media (min-width: 1024px) {
+    .entry {
+      grid-template-columns: minmax(0, 1.02fr) minmax(400px, 0.98fr);
+      align-items: center;
+      gap: var(--gap-xl);
+      min-height: calc(100vh - 120px);
+    }
+  }
+
+  /* =========================================================
+     2. 사전 예상 질문
+     ========================================================= */
+  .quiz__title {
+    font-size: var(--fs-title);
+    line-height: var(--lh-title);
+  }
+
+  .quiz__hint {
+    margin-top: 10px;
+  }
+
+  .quiz__choices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap-sm);
+    margin-top: var(--gap-lg);
+  }
+
+  @media (min-width: 768px) {
+    .quiz__choices {
+      gap: var(--gap-md);
+    }
+  }
+
+  .choice {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: clamp(14px, 2.6vw, 24px);
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .choice:hover {
+    transform: translateY(-3px);
+    border-color: #f2a795;
+    box-shadow: var(--shadow-md);
+  }
+
+  .choice__swatches {
+    display: flex;
+    gap: 5px;
+    height: clamp(52px, 12vw, 84px);
+  }
+
+  .choice__swatches span {
+    flex: 1;
+    border-radius: 9px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .choice strong {
+    font-size: var(--fs-lead);
+  }
+
+  .choice small {
+    color: var(--muted);
+  }
+
+  .quiz__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-sm);
+    margin-top: var(--gap-md);
+  }
+
+  /* =========================================================
+     3. 사전 예상 결과
+     ========================================================= */
+  .predict {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  @media (min-width: 1180px) {
+    .predict {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
+      gap: var(--gap-xl);
+    }
+  }
+
+  .type-headline {
+    font-size: var(--fs-display);
+    line-height: var(--lh-display);
+    letter-spacing: -0.02em;
+  }
+
+  .type-headline__en {
+    display: block;
+    color: var(--coral-deep);
+    font-size: var(--fs-section);
+    letter-spacing: 0.06em;
+  }
+
+  .axis-list {
+    display: grid;
+    gap: var(--gap-md);
+  }
+
+  /* =========================================================
+     4. 오프라인 드레이핑 안내
+     ========================================================= */
+  .draping__checks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-sm);
+  }
+
+  @media (min-width: 620px) {
+    .draping__checks {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .draping__checks {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  .check-card {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+  }
+
+  .check-card b {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: var(--coral-deep);
+    background: var(--coral-soft);
+    font-size: var(--fs-meta);
+  }
+
+  .check-card strong {
+    font-size: var(--fs-body);
+  }
+
+  .draping__how {
+    display: grid;
+    gap: var(--gap-md);
+  }
+
+  @media (min-width: 900px) {
+    .draping__how {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  /* =========================================================
+     5. 12타입 최종 선택
+     ========================================================= */
+  .type-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-md);
+    align-items: start;
+  }
+
+  @media (min-width: 700px) {
+    .type-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .type-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--gap-lg);
+    }
+  }
+
+  .season {
+    display: grid;
+    gap: var(--gap-sm);
+    align-content: start;
+  }
+
+  .season__title {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--season-color, var(--line-strong));
+  }
+
+  .season__title strong {
+    font-size: var(--fs-section);
+  }
+
+  .season__title small {
+    color: var(--season-color, var(--muted));
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  .type-card {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .type-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--season-color, var(--coral));
+    box-shadow: var(--shadow-md);
+  }
+
+  .type-card.is-predicted {
+    border-color: var(--coral);
+    box-shadow: inset 0 0 0 1px var(--coral);
+  }
+
+  .type-card__name {
+    font-size: var(--fs-lead);
+    font-weight: 700;
+  }
+
+  .type-card__en {
+    display: block;
+    color: var(--muted);
+    font-size: var(--fs-meta);
+    letter-spacing: 0.05em;
+  }
+
+  .type-card__axis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .type-card__axis span {
+    padding: 4px 9px;
+    border-radius: var(--r-pill);
+    background: var(--cream);
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .type-card__mark {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+  }
+
+  /* 확정 후 비교 화면 */
+  .compare-types {
+    display: grid;
+    gap: var(--gap-md);
+    align-items: stretch;
+  }
+
+  @media (min-width: 760px) {
+    .compare-types {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .compare-types__item {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    padding: clamp(18px, 2.6vw, 26px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+  }
+
+  .compare-types__item.is-final {
+    border-color: var(--coral);
+    background: var(--coral-soft);
+  }
+
+  /* =========================================================
+     6. 사진 준비
+     ========================================================= */
+  .photo {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .photo {
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      gap: var(--gap-xl);
+    }
+  }
+
+  .camera-frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: var(--r-lg);
+    background: linear-gradient(150deg, #ece6de, #d9d2c9);
+    overflow: hidden;
+  }
+
+  .camera-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    opacity: 0;
+  }
+
+  .camera-frame.is-live video {
+    opacity: 1;
+  }
+
+  .camera-frame__empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 10px;
+    padding: 24px;
+    color: #756d65;
+    text-align: center;
+  }
+
+  .camera-frame__empty strong {
+    font-size: var(--fs-lead);
+  }
+
+  /* 얼굴 + 어깨 가이드 (전신 가이드가 아님) */
+  .camera-guide {
+    position: absolute;
+    inset: 9% 18% 6%;
+    border: 2px dashed rgba(255, 255, 255, 0.8);
+    border-radius: 48% 48% 34% 34%;
+    pointer-events: none;
+  }
+
+  .photo__tips {
+    display: grid;
+    gap: var(--gap-sm);
+  }
+
+  .tip {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    font-size: var(--fs-body);
+  }
+
+  .tip svg {
+    flex: 0 0 auto;
+    margin-top: 3px;
+    color: var(--coral);
+  }
+
+  .consent {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    font-size: var(--fs-body);
+    line-height: 1.55;
+    cursor: pointer;
+  }
+
+  .consent input {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    accent-color: var(--coral);
+  }
+
+  .file-button {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .file-button input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .file-button.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  /* =========================================================
+     7. 스튜디오 (메이크업 · 스타일링 공통)
+     ========================================================= */
+  .studio {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  /* iPad 가로모드(1024)부터는 데스크톱에 가까운 2열 스튜디오 */
+  @media (min-width: 1024px) {
+    .studio {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: var(--gap-lg);
+    }
+
+    .studio__preview {
+      position: sticky;
+      top: 84px;
+    }
+
+    .studio__preview .photo-stage {
+      max-width: 560px;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .studio {
+      grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+      gap: var(--gap-xl);
+    }
+  }
+
+  .studio__preview {
+    display: grid;
+    gap: var(--gap-md);
+    align-content: start;
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .studio__preview {
+      grid-template-columns: minmax(240px, 360px) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+
+  .photo-stage {
+    position: relative;
+    border-radius: var(--r-lg);
+    background: var(--cream);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+
+  .photo-stage canvas,
+  .photo-stage img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+
+  .photo-stage__label {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    padding: 7px 13px;
+    border-radius: var(--r-pill);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--ink-soft);
+    font-size: var(--fs-meta);
+    font-weight: 600;
+  }
+
+  .studio__side {
+    display: grid;
+    gap: var(--gap-md);
+    align-content: start;
+  }
+
+  .preset-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  @media (min-width: 520px) {
+    .preset-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .preset {
+    display: grid;
+    gap: 3px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.14s ease, background 0.14s ease;
+  }
+
+  .preset:hover {
+    border-color: var(--coral);
+  }
+
+  .preset.is-selected {
+    border-color: var(--coral);
+    background: var(--coral-soft);
+    box-shadow: inset 0 0 0 1px var(--coral);
+  }
+
+  .preset strong {
+    font-size: var(--fs-body);
+  }
+
+  .preset em {
+    color: var(--coral-deep);
+    font-size: 12px;
+    font-style: normal;
+    letter-spacing: 0.08em;
+  }
+
+  .preset small {
+    color: var(--muted);
+  }
+
+  .control-grid {
+    display: grid;
+    gap: 0 var(--gap-lg);
+  }
+
+  @media (min-width: 1180px) {
+    .control-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .control-block--wide {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* 넓은 화면에서는 색 선택과 표현 방식 선택을 좌우로 나눕니다. */
+  @media (min-width: 1440px) {
+    .control-block--wide {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      column-gap: var(--gap-lg);
+    }
+
+    .control-block--wide .control-block__head,
+    .control-block--wide .control-block__help {
+      grid-column: 1 / -1;
+    }
+
+    .control-block--wide .options {
+      align-content: start;
+    }
+  }
+
+  .control-block__colors {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+
+  .control-block {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+    padding-block: var(--gap-md);
+    border-top: 1px solid var(--line);
+  }
+
+  .control-block:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .control-block__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .control-block__head strong {
+    font-size: var(--fs-lead);
+  }
+
+  .control-block__head b {
+    color: var(--coral-deep);
+    font-size: var(--fs-body);
+  }
+
+  .control-block__help {
+    color: var(--muted);
+    font-size: var(--fs-meta);
+  }
+
+  .free-colors summary {
+    padding: 8px 0;
+    color: var(--ink-soft);
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .free-colors[open] summary {
+    margin-bottom: 8px;
+  }
+
+  /* 의상 카탈로그 */
+  .category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .category-tabs button {
+    flex: 0 0 auto;
+    min-height: 46px;
+    padding: 9px 18px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .category-tabs button.is-active {
+    color: #fff;
+    border-color: var(--coral);
+    background: var(--coral);
+  }
+
+  .catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--gap-sm);
+  }
+
+  @media (min-width: 768px) {
+    .catalog {
+      grid-template-columns: repeat(auto-fill, minmax(178px, 1fr));
+    }
+  }
+
+  .catalog-card {
+    position: relative;
+    display: grid;
+    gap: 9px;
+    align-content: start;
+    padding: 12px;
+    border: 1.5px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .catalog-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .catalog-card.is-selected {
+    border-color: var(--coral);
+    box-shadow: inset 0 0 0 1px var(--coral);
+  }
+
+  .catalog-card__media {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1 / 1;
+    border-radius: var(--r-sm);
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  .catalog-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .catalog-card__swatch {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: var(--swatch-color, var(--cream));
+    color: var(--swatch-ink, var(--ink-soft));
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.07);
+  }
+
+  .catalog-card__name {
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+
+  .catalog-card small {
+    color: var(--muted);
+  }
+
+  .catalog-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  .catalog-card__check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--coral);
+  }
+
+  /* 선택 요약 리본 */
+  .look-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .look-strip__item {
+    display: grid;
+    gap: 5px;
+    width: 84px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .look-strip__item span {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    overflow: hidden;
+  }
+
+  .look-strip__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .look-strip__item small {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* =========================================================
+     8. 결과 · Before / After · 컬러 프로필
+     ========================================================= */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--gap-sm);
+  }
+
+  @media (min-width: 768px) {
+    .compare {
+      gap: var(--gap-md);
+    }
+  }
+
+  .compare figure {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+
+  .compare figcaption {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-size: var(--fs-body);
+    font-weight: 600;
+  }
+
+  .result-layout {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  @media (min-width: 1180px) {
+    .result-layout {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: var(--gap-xl);
+    }
+  }
+
+  .profile-card {
+    display: grid;
+    gap: var(--gap-md);
+    padding: clamp(22px, 3vw, 38px);
+    border-radius: var(--r-lg);
+    background: linear-gradient(160deg, var(--paper), var(--cream));
+    box-shadow: var(--shadow-md);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--gap-sm);
+  }
+
+  .summary-item {
+    display: grid;
+    gap: 4px;
+    padding: 13px 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+  }
+
+  .summary-item small {
+    color: var(--muted);
+  }
+
+  .summary-item strong {
+    font-size: var(--fs-body);
+  }
+
+  .summary-item i {
+    display: block;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--swatch-color, var(--cream));
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  }
+
+  /* =========================================================
+     9. 교사용 관리센터
+     ========================================================= */
+  .gate {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    align-content: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: var(--gutter);
+    background: linear-gradient(150deg, var(--paper), var(--cream));
+  }
+
+  .gate__card {
+    width: min(100%, 460px);
+    display: grid;
+    gap: var(--gap-md);
+    padding: clamp(26px, 5vw, 44px);
+    border-radius: var(--r-xl);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+  }
+
+  .gate__icon {
+    display: grid;
+    place-items: center;
+    width: 66px;
+    height: 66px;
+    margin-inline: auto;
+    border-radius: 22px;
+    color: var(--coral-deep);
+    background: var(--coral-soft);
+  }
+
+  .gate__card form {
+    display: grid;
+    gap: var(--gap-sm);
+    text-align: left;
+  }
+
+  .teacher-head {
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .teacher-head__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--gap-sm);
+    min-height: 78px;
+    padding-block: 14px;
+  }
+
+  .teacher-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .teacher-brand span {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    color: var(--coral-deep);
+    background: var(--coral-soft);
+  }
+
+  .teacher-brand small {
+    display: block;
+    color: var(--coral-deep);
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .teacher-brand strong {
+    display: block;
+    font-size: var(--fs-lead);
+  }
+
+  .teacher-head__links {
+    display: flex;
+    gap: 10px;
+  }
+
+  .code-hero {
+    display: grid;
+    gap: var(--gap-sm);
+    align-items: center;
+    padding: clamp(22px, 3.4vw, 36px);
+    border-radius: var(--r-lg);
+    background: linear-gradient(140deg, var(--coral-soft), var(--paper));
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (min-width: 900px) {
+    .code-hero {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+  }
+
+  .code-hero__code {
+    font-size: clamp(38px, 6vw, 68px);
+    line-height: 1.1;
+    letter-spacing: 0.06em;
+    color: var(--coral-deep);
+  }
+
+  .teacher-columns {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .teacher-columns {
+      grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.15fr);
+    }
+  }
+
+  .class-form {
+    display: grid;
+    gap: var(--gap-sm);
+  }
+
+  .class-list {
+    display: grid;
+    gap: 10px;
+  }
+
+  .class-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--gap-sm);
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+  }
+
+  .class-row__code {
+    color: var(--coral-deep);
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .class-row__meta {
+    color: var(--muted);
+    font-size: var(--fs-meta);
+  }
+
+  .class-row__actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .flow-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--gap-sm);
+  }
+
+  @media (min-width: 620px) {
+    .flow-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    .flow-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .flow-card {
+    display: grid;
+    gap: 5px;
+    align-content: start;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--paper);
+  }
+
+  .flow-card b {
+    color: var(--coral);
+    font-size: var(--fs-section);
+  }
+
+  .flow-card strong {
+    font-size: var(--fs-body);
+  }
+
+  .flow-card small {
+    color: var(--muted);
+  }
+
+  /* =========================================================
+     10. AI 설정
+     ========================================================= */
+  .settings-layout {
+    display: grid;
+    gap: var(--gap-lg);
+    align-items: start;
+  }
+
+  @media (min-width: 1024px) {
+    .settings-layout {
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+    }
+  }
+
+  .select-grid {
+    display: grid;
+    gap: var(--gap-sm);
+  }
+
+  @media (min-width: 620px) {
+    .select-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .secret-input {
+    display: flex;
+    gap: 8px;
+  }
+
+  .secret-input input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .secret-input button {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,136 @@
+/* ============================================================
+   디자인 토큰
+   - 색 / 타이포 / 간격 / 레이아웃 폭을 한 곳에서 정의합니다.
+   - 반응형은 이 파일의 토큰 값을 브레이크포인트별로 바꾸는 방식으로
+     처리하고, 화면 CSS 에서는 토큰만 사용합니다.
+   브레이크포인트
+     모바일   : ~767px      (기본값)
+     태블릿   : 768~1179px
+     노트북+  : 1180px~
+     와이드   : 1440px~
+   ============================================================ */
+@layer tokens {
+  :root {
+    /* 브랜드 컬러 : 아이보리 / 크림 / 코랄 / 라벤더 / 뉴트럴 */
+    --ivory: #faf8f4;
+    --cream: #f4efe7;
+    --paper: #fffdf9;
+    --ink: #2a2724;
+    --ink-soft: #55504a;
+    --muted: #7d766e;
+    --line: #e8e1d7;
+    --line-strong: #d8cfc2;
+
+    --coral: #f2705a;
+    --coral-deep: #cd5340;
+    --coral-soft: #fff1ec;
+    --lavender: #8878d6;
+    --lavender-deep: #6a58bd;
+    --lavender-soft: #f1eefc;
+    --sand: #e6d7bd;
+    --sage: #9aab8d;
+
+    --spring: #e8964f;
+    --summer: #7f9fd0;
+    --autumn: #a9713f;
+    --winter: #6f5cae;
+
+    --danger: #c0463a;
+    --danger-soft: #fdeeeb;
+    --success: #3f7d63;
+    --focus: #3f6ea8;
+
+    --shadow-sm: 0 2px 8px rgba(76, 58, 42, 0.06);
+    --shadow-md: 0 10px 28px rgba(76, 58, 42, 0.08);
+    --shadow-lg: 0 22px 54px rgba(76, 58, 42, 0.12);
+
+    --r-xs: 10px;
+    --r-sm: 14px;
+    --r-md: 20px;
+    --r-lg: 26px;
+    --r-xl: 34px;
+    --r-pill: 999px;
+
+    /* ---------- 레이아웃 (모바일 기본값) ---------- */
+    --gutter: 20px;
+    --shell-max: 100%;
+    --column-max: 100%;
+    --gap-xs: 8px;
+    --gap-sm: 12px;
+    --gap-md: 18px;
+    --gap-lg: 26px;
+    --gap-xl: 36px;
+    --section-gap: 26px;
+
+    /* ---------- 타이포 (모바일 기본값) ----------
+       한글 가독성을 위해 12px 이하 사용을 피하고,
+       본문은 14px 아래로 내려가지 않게 합니다. */
+    --fs-display: clamp(27px, 7.4vw, 36px);
+    --fs-title: clamp(22px, 5.6vw, 28px);
+    --fs-section: clamp(18px, 4.6vw, 22px);
+    --fs-lead: clamp(15px, 4.1vw, 17px);
+    --fs-body: clamp(14px, 3.8vw, 16px);
+    --fs-label: 15px;
+    --fs-button: 16px;
+    --fs-meta: 13px;
+    --fs-eyebrow: 12px;
+
+    --lh-display: 1.22;
+    --lh-title: 1.28;
+    --lh-body: 1.62;
+    --lh-meta: 1.5;
+
+    --ls-display: -0.03em;
+    --ls-body: -0.01em;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --gutter: 32px;
+      --shell-max: 1100px;
+      --column-max: 760px;
+      --gap-md: 20px;
+      --gap-lg: 30px;
+      --gap-xl: 44px;
+      --section-gap: 34px;
+
+      --fs-display: clamp(30px, 4vw, 42px);
+      --fs-title: clamp(24px, 3vw, 32px);
+      --fs-section: clamp(19px, 2.2vw, 24px);
+      --fs-lead: clamp(16px, 1.9vw, 19px);
+      --fs-body: clamp(15px, 1.75vw, 17px);
+      --fs-label: 15px;
+      --fs-button: 16px;
+      --fs-meta: 14px;
+      --fs-eyebrow: 12px;
+    }
+  }
+
+  @media (min-width: 1180px) {
+    :root {
+      --gutter: 40px;
+      --shell-max: 1320px;
+      --column-max: 880px;
+      --gap-lg: 32px;
+      --gap-xl: 52px;
+      --section-gap: 40px;
+
+      --fs-display: clamp(36px, 3.1vw, 52px);
+      --fs-title: clamp(27px, 2.3vw, 36px);
+      --fs-section: clamp(20px, 1.6vw, 26px);
+      --fs-lead: clamp(17px, 1.35vw, 21px);
+      --fs-body: clamp(16px, 1.15vw, 18px);
+      --fs-label: 16px;
+      --fs-button: 17px;
+      --fs-meta: 14px;
+      --fs-eyebrow: 13px;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    :root {
+      --gutter: 52px;
+      --shell-max: 1480px;
+    }
+  }
+}
