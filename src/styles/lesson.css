@@ -99,6 +99,16 @@
     background: var(--ink);
   }
 
+  .lesson__tool:disabled {
+    cursor: progress;
+    opacity: 0.62;
+  }
+
+  .lesson__tool.is-saved {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
   /* ---------- 슬라이드 무대 ---------- */
   .lesson__stage {
     position: relative;

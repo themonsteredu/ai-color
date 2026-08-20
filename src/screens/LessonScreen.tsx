@@ -1,4 +1,4 @@
-import { ArrowLeft, ChevronLeft, ChevronRight, Lightbulb, Maximize2, Minimize2 } from 'lucide-react'
+import { ArrowLeft, ChevronLeft, ChevronRight, FileDown, Lightbulb, Maximize2, Minimize2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { Link } from 'react-router-dom'
 import { SlideView } from '../components/lesson/SlideView'
@@ -25,6 +25,7 @@ export function LessonScreen() {
   const [index, setIndex] = useState(0)
   const [showNotes, setShowNotes] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  const [saveState, setSaveState] = useState<'idle' | 'working' | 'done'>('idle')
   const stageRef = useRef<HTMLDivElement>(null)
   const touchStart = useRef<number | null>(null)
 
@@ -36,6 +37,26 @@ export function LessonScreen() {
     [total],
   )
   const move = useCallback((delta: number) => setIndex((value) => Math.min(total - 1, Math.max(0, value + delta))), [total])
+
+  const saveDocument = useCallback(async () => {
+    setSaveState('working')
+    try {
+      const [{ downloadHwpx }, { buildLessonDocument, LESSON_DOCUMENT_FILE }] = await Promise.all([
+        import('../lib/hwpx'),
+        import('../data/lessonDocument'),
+      ])
+      downloadHwpx(buildLessonDocument(), LESSON_DOCUMENT_FILE)
+      setSaveState('done')
+    } catch {
+      setSaveState('idle')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (saveState !== 'done') return
+    const timer = window.setTimeout(() => setSaveState('idle'), 2600)
+    return () => window.clearTimeout(timer)
+  }, [saveState])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -101,6 +122,16 @@ export function LessonScreen() {
           >
             <Lightbulb size={17} aria-hidden="true" />
             <span>교사 노트</span>
+          </button>
+          <button
+            className={`lesson__tool${saveState === 'done' ? ' is-saved' : ''}`}
+            type="button"
+            onClick={saveDocument}
+            disabled={saveState === 'working'}
+            title="슬라이드 전체를 한글(HWPX) 문서로 저장합니다. 한글 2014 이상에서 열립니다."
+          >
+            <FileDown size={17} aria-hidden="true" />
+            <span>{saveState === 'done' ? '저장됨' : '한글 파일'}</span>
           </button>
           <button className="lesson__tool" type="button" onClick={toggleFullscreen}>
             {isFullscreen ? <Minimize2 size={17} aria-hidden="true" /> : <Maximize2 size={17} aria-hidden="true" />}
