@@ -8,6 +8,10 @@
     {
       "source": "/settings",
       "destination": "/index.html"
+    },
+    {
+      "source": "/lesson",
+      "destination": "/index.html"
     }
   ]
 }

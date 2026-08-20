@@ -1,4 +1,4 @@
-import { ArrowLeft, Copy, Database, KeyRound, LockKeyhole, Palette, Plus, Settings, Sparkles, Trash2 } from 'lucide-react'
+import { ArrowLeft, Copy, Database, KeyRound, LockKeyhole, Palette, Plus, Presentation, Settings, Sparkles, Trash2 } from 'lucide-react'
 import { FormEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { classSessionStore, type ClassSession } from '../services/classSessions'
@@ -135,6 +135,23 @@ export function TeacherScreen() {
       <main className="page__body">
         <div className="shell">
           <div className="stack stack--lg">
+            <Link className="lesson-cta" to="/lesson">
+              <span className="lesson-cta__icon" aria-hidden="true">
+                <Presentation size={26} />
+              </span>
+              <span className="lesson-cta__text">
+                <small>CLASS SLIDES</small>
+                <strong>수업 자료 슬라이드 열기</strong>
+                <span>
+                  퍼스널컬러 컨설턴트 · 메이크업 아티스트 · 패션 스타일리스트 세 직업을 슬라이드로 소개하고, 학생들과 함께 풀
+                  퀴즈가 들어 있어요. 프로젝터에 띄워 바로 진행할 수 있습니다.
+                </span>
+              </span>
+              <span className="lesson-cta__go" aria-hidden="true">
+                시작하기
+              </span>
+            </Link>
+
             <section className="code-hero">
               <div>
                 <span className="eyebrow">CLASS CODE</span>
