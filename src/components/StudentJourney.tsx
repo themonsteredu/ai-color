@@ -40,17 +40,25 @@ function fileToDataUrl(blob: Blob) {
 async function resizePhoto(photoUrl: string) {
   const source = await fetch(photoUrl).then((response) => response.blob())
   const bitmap = await createImageBitmap(source)
-  const ratio = Math.min(1280 / bitmap.width, 1600 / bitmap.height, 1)
+  // 촬영 단계에서 이미 구도를 맞춰 두었으므로, 여기서는 필요한 경우에만 줄입니다.
+  const ratio = Math.min(1400 / bitmap.width, 1750 / bitmap.height, 1)
+  if (ratio === 1 && /^image\/(jpeg|png|webp)$/.test(source.type)) {
+    // 줄일 필요가 없으면 다시 인코딩하지 않습니다. (JPEG 을 두 번 저장하면 화질이 떨어집니다)
+    bitmap.close()
+    return fileToDataUrl(source)
+  }
   const canvas = document.createElement('canvas')
   canvas.width = Math.max(1, Math.round(bitmap.width * ratio))
   canvas.height = Math.max(1, Math.round(bitmap.height * ratio))
   const context = canvas.getContext('2d')
   if (!context) throw new Error('사진을 준비하지 못했어요.')
+  context.imageSmoothingEnabled = true
+  context.imageSmoothingQuality = 'high'
   context.fillStyle = '#FAF8F4'
   context.fillRect(0, 0, canvas.width, canvas.height)
   context.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
   bitmap.close()
-  return canvas.toDataURL('image/jpeg', 0.88)
+  return canvas.toDataURL('image/jpeg', 0.93)
 }
 
 async function assetToDataUrl(path: string) {

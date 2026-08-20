@@ -1,28 +1,6 @@
 import { useEffect, useState } from 'react'
-import type { FaceLandmarker } from '@mediapipe/tasks-vision'
+import { getImageLandmarker } from './landmarker'
 import type { FacePoint } from './types'
-
-let landmarkerPromise: Promise<FaceLandmarker> | null = null
-
-async function getLandmarker() {
-  if (!landmarkerPromise) {
-    landmarkerPromise = import('@mediapipe/tasks-vision').then(async ({ FaceLandmarker, FilesetResolver }) => {
-      const vision = await FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.0.1/wasm')
-      return FaceLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
-          delegate: 'GPU',
-        },
-        runningMode: 'IMAGE',
-        numFaces: 1,
-        minFaceDetectionConfidence: 0.5,
-        minFacePresenceConfidence: 0.5,
-        minTrackingConfidence: 0.5,
-      })
-    })
-  }
-  return landmarkerPromise
-}
 
 export function useFaceLandmarks(photoUrl: string) {
   const [landmarks, setLandmarks] = useState<FacePoint[] | null>(null)
@@ -33,9 +11,11 @@ export function useFaceLandmarks(photoUrl: string) {
     let cancelled = false
     const image = new Image()
     setStatus('loading')
+    setLandmarks(null)
     image.onload = async () => {
       try {
-        const landmarker = await getLandmarker()
+        const landmarker = await getImageLandmarker()
+        if (cancelled) return
         const result = landmarker.detect(image)
         if (cancelled) return
         const face = result.faceLandmarks[0]
@@ -49,7 +29,9 @@ export function useFaceLandmarks(photoUrl: string) {
         if (!cancelled) setStatus('manual')
       }
     }
-    image.onerror = () => setStatus('manual')
+    image.onerror = () => {
+      if (!cancelled) setStatus('manual')
+    }
     image.src = photoUrl
     return () => {
       cancelled = true
@@ -59,4 +41,15 @@ export function useFaceLandmarks(photoUrl: string) {
   }, [photoUrl])
 
   return { landmarks, status }
+}
+
+/** 업로드한 사진 등 임의의 이미지에서 한 번만 랜드마크를 구합니다. */
+export async function detectLandmarks(image: HTMLImageElement): Promise<FacePoint[] | null> {
+  try {
+    const landmarker = await getImageLandmarker()
+    const face = landmarker.detect(image).faceLandmarks[0]
+    return face?.length ? face.map(({ x, y, z }) => ({ x, y, z })) : null
+  } catch {
+    return null
+  }
 }

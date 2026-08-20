@@ -392,7 +392,10 @@
 
   .camera-frame {
     position: relative;
-    aspect-ratio: 4 / 5;
+    /* 카메라를 켜면 실제 영상 비율(--cam-aspect)로 바뀝니다.
+       비율을 영상과 같게 맞춰야 화면이 잘리지 않고 가이드가 정확히 겹칩니다.
+       기본값은 노트북 웹캠에서 가장 흔한 16:9 로 두어 화면 흔들림을 줄입니다. */
+    aspect-ratio: var(--cam-aspect, 16 / 9);
     border-radius: var(--r-lg);
     background: linear-gradient(150deg, #ece6de, #d9d2c9);
     overflow: hidden;
@@ -426,13 +429,96 @@
     font-size: var(--fs-lead);
   }
 
-  /* 얼굴 + 어깨 가이드 (전신 가이드가 아님) */
+  /* 얼굴 + 어깨 촬영 가이드 (전신 가이드가 아님) */
   .camera-guide {
     position: absolute;
-    inset: 9% 18% 6%;
-    border: 2px dashed rgba(255, 255, 255, 0.8);
-    border-radius: 48% 48% 34% 34%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
+  }
+
+  /* 촬영 안내는 미리보기 아래에 두어 가이드를 가리지 않습니다. */
+  .camera-status {
+    display: grid;
+    gap: 2px;
+    justify-items: center;
+    padding: 13px 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    text-align: center;
+  }
+
+  .camera-status strong {
+    font-size: var(--fs-lead);
+  }
+
+  .camera-status small {
+    color: var(--muted);
+  }
+
+  .camera-status.is-ready {
+    border-color: transparent;
+    background: #eaf6ef;
+  }
+
+  .camera-status.is-ready strong {
+    color: #2f7a58;
+  }
+
+  .camera-status.is-ready small {
+    color: #48836a;
+  }
+
+  .camera-countdown {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .camera-countdown span {
+    display: grid;
+    place-items: center;
+    width: clamp(84px, 26%, 150px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: rgba(28, 24, 21, 0.55);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: clamp(44px, 13%, 78px);
+    font-weight: 700;
+  }
+
+  .camera-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .camera-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 13px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-pill);
+    background: var(--paper);
+    color: var(--ink-soft);
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .camera-toggle input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--coral);
   }
 
   .photo__tips {

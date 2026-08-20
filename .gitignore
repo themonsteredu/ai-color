@@ -7,3 +7,6 @@ vite.config.d.ts
 browser-*.png
 vite.*.log
 *.local
+
+# 빌드 시 준비되는 얼굴 인식 실행 파일
+public/mediapipe/

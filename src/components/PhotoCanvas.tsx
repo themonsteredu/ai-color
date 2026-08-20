@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FacePoint } from '../face/types'
 import type { MakeupState } from '../types'
 
@@ -7,6 +7,11 @@ interface PhotoCanvasProps {
   makeup: MakeupState
   landmarks?: FacePoint[] | null
   ariaLabel?: string
+}
+
+interface CanvasSize {
+  width: number
+  height: number
 }
 
 interface Point {
@@ -30,8 +35,14 @@ interface FaceFrame {
   chin: Point
 }
 
-const CANVAS_WIDTH = 720
-const CANVAS_HEIGHT = 900
+/** 최종 이미지 비율 4:5 */
+const ASPECT = 1.25
+/** 화면이 작아도 이 아래로는 내려가지 않습니다. */
+const MIN_WIDTH = 480
+/** 메모리와 그리기 비용을 감안한 상한 */
+const MAX_WIDTH = 1600
+/** 원본보다 크게 그려도 화질은 좋아지지 않으므로 이 배율까지만 허용합니다. */
+const MAX_SOURCE_SCALE = 1.35
 
 function hexToRgba(hex: string, alpha: number) {
   const clean = hex.replace('#', '')
@@ -41,13 +52,15 @@ function hexToRgba(hex: string, alpha: number) {
   return `rgba(${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}, ${alpha})`
 }
 
-function drawCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement) {
-  const scale = Math.max(CANVAS_WIDTH / image.naturalWidth, CANVAS_HEIGHT / image.naturalHeight)
-  const sourceWidth = CANVAS_WIDTH / scale
-  const sourceHeight = CANVAS_HEIGHT / scale
+function drawCover(ctx: CanvasRenderingContext2D, image: HTMLImageElement, size: CanvasSize) {
+  const scale = Math.max(size.width / image.naturalWidth, size.height / image.naturalHeight)
+  const sourceWidth = size.width / scale
+  const sourceHeight = size.height / scale
   const sourceX = (image.naturalWidth - sourceWidth) / 2
   const sourceY = (image.naturalHeight - sourceHeight) / 2
-  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(image, sourceX, sourceY, sourceWidth, sourceHeight, 0, 0, size.width, size.height)
   return { sourceX, sourceY, sourceWidth, sourceHeight }
 }
 
@@ -56,13 +69,14 @@ function buildFrame(
   landmarks: FacePoint[] | null | undefined,
   image: HTMLImageElement,
   cover: { sourceX: number; sourceY: number; sourceWidth: number; sourceHeight: number },
+  size: CanvasSize,
 ): FaceFrame {
   if (landmarks && landmarks.length > 400) {
     const at = (index: number): Point => {
       const point = landmarks[index]
       return {
-        x: ((point.x * image.naturalWidth - cover.sourceX) / cover.sourceWidth) * CANVAS_WIDTH,
-        y: ((point.y * image.naturalHeight - cover.sourceY) / cover.sourceHeight) * CANVAS_HEIGHT,
+        x: ((point.x * image.naturalWidth - cover.sourceX) / cover.sourceWidth) * size.width,
+        y: ((point.y * image.naturalHeight - cover.sourceY) / cover.sourceHeight) * size.height,
       }
     }
     const left = at(234)
@@ -104,8 +118,8 @@ function buildFrame(
   }
 
   // 얼굴 인식을 사용할 수 없을 때의 평균 비율 근사값 (정면 상반신 사진 기준)
-  const center = { x: CANVAS_WIDTH * 0.5, y: CANVAS_HEIGHT * 0.34 }
-  const width = CANVAS_WIDTH * 0.34
+  const center = { x: size.width * 0.5, y: size.height * 0.34 }
+  const width = size.width * 0.34
   const height = width * 1.36
   const eyeY = center.y - height * 0.05
   const eyeOffset = width * 0.23
@@ -173,7 +187,7 @@ function tracePath(ctx: CanvasRenderingContext2D, points: Point[]) {
   ctx.closePath()
 }
 
-function paintBase(ctx: CanvasRenderingContext2D, frame: FaceFrame, base: string) {
+function paintBase(ctx: CanvasRenderingContext2D, frame: FaceFrame, base: string, size: CanvasSize) {
   if (base === '글로우') {
     ctx.save()
     ctx.globalCompositeOperation = 'soft-light'
@@ -188,7 +202,7 @@ function paintBase(ctx: CanvasRenderingContext2D, frame: FaceFrame, base: string
     gradient.addColorStop(0, 'rgba(255,247,235,0.55)')
     gradient.addColorStop(1, 'rgba(255,247,235,0)')
     ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+    ctx.fillRect(0, 0, size.width, size.height)
     ctx.restore()
   }
   if (base === '매트') {
@@ -430,38 +444,88 @@ function paintPoint(ctx: CanvasRenderingContext2D, frame: FaceFrame, point: stri
 
 export function PhotoCanvas({ imageUrl, makeup, landmarks, ariaLabel = '메이크업 미리보기' }: PhotoCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [image, setImage] = useState<HTMLImageElement | null>(null)
+  const [size, setSize] = useState<CanvasSize>({ width: MIN_WIDTH, height: Math.round(MIN_WIDTH * ASPECT) })
+
+  // 사진은 한 번만 디코딩해 두고, 메이크업이 바뀔 때마다 다시 그리기만 합니다.
+  useEffect(() => {
+    if (!imageUrl) return
+    let cancelled = false
+    const source = new Image()
+    source.onload = () => {
+      if (!cancelled) setImage(source)
+    }
+    source.src = imageUrl
+    return () => {
+      cancelled = true
+      source.onload = null
+    }
+  }, [imageUrl])
+
+  // 화면에 표시되는 크기 × 화면 배율만큼 캔버스 해상도를 올려 흐릿함을 없앱니다.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const host = canvas?.parentElement ?? canvas
+    if (!canvas || !host) return
+
+    let mediaQuery: MediaQueryList | null = null
+
+    const apply = () => {
+      const displayWidth = canvas.clientWidth || host.clientWidth
+      if (!displayWidth) return
+      const ratio = window.devicePixelRatio || 1
+      // 원본 사진보다 크게 잡으면 확대만 될 뿐이라 소스 크기로 상한을 둡니다.
+      const sourceLimit = image ? image.naturalWidth * MAX_SOURCE_SCALE : MAX_WIDTH
+      const width = Math.round(
+        Math.min(MAX_WIDTH, sourceLimit, Math.max(MIN_WIDTH, displayWidth * ratio)),
+      )
+      setSize((current) => (Math.abs(current.width - width) < 8 ? current : { width, height: Math.round(width * ASPECT) }))
+    }
+
+    // 화면 배율(DPR)은 창을 다른 모니터로 옮기거나 확대할 때만 바뀌며,
+    // ResizeObserver 로는 감지되지 않습니다.
+    const watchPixelRatio = () => {
+      mediaQuery?.removeEventListener('change', onRatioChange)
+      mediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`)
+      mediaQuery.addEventListener('change', onRatioChange)
+    }
+    function onRatioChange() {
+      apply()
+      watchPixelRatio()
+    }
+
+    apply()
+    watchPixelRatio()
+
+    const observer = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(() => apply()) : null
+    observer?.observe(host)
+    return () => {
+      observer?.disconnect()
+      mediaQuery?.removeEventListener('change', onRatioChange)
+    }
+  }, [image])
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas || !image) return
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    let cancelled = false
-    const image = new Image()
-    image.onload = () => {
-      if (cancelled) return
-      canvas.width = CANVAS_WIDTH
-      canvas.height = CANVAS_HEIGHT
-      ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-      const cover = drawCover(ctx, image)
-      const frame = buildFrame(landmarks, image, cover)
-      const { options } = makeup
-      paintBase(ctx, frame, options.base)
-      paintShading(ctx, frame, options.shading)
-      paintBlush(ctx, frame, makeup.blush.hex, makeup.blush.intensity, options.blushPlacement)
-      paintBrows(ctx, frame, options.brow)
-      paintEyes(ctx, frame, makeup.eye.hex, makeup.eye.intensity, options.eyeStyle, options.eyeliner, options.lashes)
-      paintLips(ctx, frame, makeup.lip.hex, makeup.lip.intensity, options.lipFinish)
-      paintHighlighter(ctx, frame, options.highlighter)
-      paintPoint(ctx, frame, options.point)
-    }
-    image.src = imageUrl
-    return () => {
-      cancelled = true
-      image.onload = null
-    }
-  }, [imageUrl, makeup, landmarks])
+    canvas.width = size.width
+    canvas.height = size.height
+    ctx.clearRect(0, 0, size.width, size.height)
+    const cover = drawCover(ctx, image, size)
+    const frame = buildFrame(landmarks, image, cover, size)
+    const { options } = makeup
+    paintBase(ctx, frame, options.base, size)
+    paintShading(ctx, frame, options.shading)
+    paintBlush(ctx, frame, makeup.blush.hex, makeup.blush.intensity, options.blushPlacement)
+    paintBrows(ctx, frame, options.brow)
+    paintEyes(ctx, frame, makeup.eye.hex, makeup.eye.intensity, options.eyeStyle, options.eyeliner, options.lashes)
+    paintLips(ctx, frame, makeup.lip.hex, makeup.lip.intensity, options.lipFinish)
+    paintHighlighter(ctx, frame, options.highlighter)
+    paintPoint(ctx, frame, options.point)
+  }, [image, makeup, landmarks, size])
 
   return <canvas ref={canvasRef} role="img" aria-label={ariaLabel} />
 }
