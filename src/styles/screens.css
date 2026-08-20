@@ -1123,6 +1123,84 @@
     gap: 10px;
   }
 
+  /* 수업 자료 슬라이드 바로가기 */
+  .lesson-cta {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    padding: clamp(20px, 3vw, 30px);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    background: linear-gradient(140deg, var(--lavender-soft), var(--paper));
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .lesson-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .lesson-cta__icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 17px;
+    color: #fff;
+    background: var(--lavender);
+  }
+
+  .lesson-cta__text {
+    display: grid;
+    gap: 4px;
+  }
+
+  .lesson-cta__text small {
+    color: var(--lavender-deep);
+    font-size: var(--fs-eyebrow);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  .lesson-cta__text strong {
+    font-size: var(--fs-section);
+  }
+
+  .lesson-cta__text > span {
+    color: var(--ink-soft);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+  }
+
+  .lesson-cta__go {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: 4px;
+    padding: 9px 18px;
+    border-radius: var(--r-pill);
+    color: #fff;
+    background: var(--lavender);
+    font-size: var(--fs-label);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  @media (min-width: 900px) {
+    .lesson-cta {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .lesson-cta__go {
+      grid-column: 3;
+      margin-top: 0;
+    }
+  }
+
   .code-hero {
     display: grid;
     gap: var(--gap-sm);
